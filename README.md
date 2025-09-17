@@ -3,6 +3,20 @@
 
 <img width="1737" height="867" alt="Image" src="https://github.com/user-attachments/assets/bf23d842-acb7-4cc1-9443-1abd2425363b" />
 
+# 機能一覧
+
+・認証機能
+
+・プロフィール機能
+
+
+# 使用技術
+
+・Next.js 14
+
+・React.js
+
+・Node.js
 
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
