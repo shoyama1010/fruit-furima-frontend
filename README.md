@@ -3,6 +3,12 @@
 
 <img width="1737" height="867" alt="Image" src="https://github.com/user-attachments/assets/bf23d842-acb7-4cc1-9443-1abd2425363b" />
 
+# 作成した目的
+
+# アプリケーションURL
+ローカル環境
+http://localhost/3000
+
 # 機能一覧
 
 ・認証機能
@@ -17,6 +23,8 @@
 ・React.js
 
 ・Node.js
+
+# 環境構築
 
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
