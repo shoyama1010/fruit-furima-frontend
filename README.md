@@ -1,4 +1,4 @@
-# fruit-furima-spa（フロントエンド）
+# fruit-furima--frontend（フロントエンド）
 
 
 <img width="1737" height="867" alt="Image" src="https://github.com/user-attachments/assets/bf23d842-acb7-4cc1-9443-1abd2425363b" />
