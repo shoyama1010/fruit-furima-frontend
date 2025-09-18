@@ -1,4 +1,12 @@
-import { notFound } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
+import { notFound, useParams, useRouter } from "next/navigation";
+
+interface Season {
+    id: number;
+    name: string;
+}
 
 interface Product {
     id: number;
@@ -6,48 +14,125 @@ interface Product {
     price: number;
     description: string;
     image: string;
-    seasons: { id: number; name: string }[];
+    // seasons: { id: number; name: string }[];
+    seasons: Season[];
 }
 
-async function getProduct(id: string): Promise<Product | null> {
-    try {
-        const res = await fetch(`http://localhost/api/products/${id}`, {
-            cache: "no-store", // 最新データを取得
-        });
-        if (!res.ok) return null;
-        return res.json();
-    } catch {
-        return null;
-    }
-}
+export default function ProductDetailPage() {
+    const params = useParams();
+    const router = useRouter();
+    const [product, setProduct] = useState<Product | null>(null);
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
-    const product = await getProduct(params.id);
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const res = await fetch(`http://localhost/api/products/${params.id}`, {
+                    credentials: "include",
+                });
+                if (!res.ok) throw new Error("データ取得失敗");
+                const data = await res.json();
+                setProduct(data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
 
-    if (!product) {
-        notFound();
-    }
+        fetchProduct();
+    }, [params.id]);
+
+    if (!product) return <p className="text-center mt-10">読み込み中...</p>;
 
     return (
-        <div className="max-w-3xl mx-auto p-6">
+        <div className="max-w-4xl mx-auto mt-10 bg-white p-6 rounded shadow">
+            {/* 商品名 */}
             <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
+
+            {/* 画像 */}
             <img
                 src={`http://localhost/storage/${product.image}`}
                 alt={product.name}
                 className="w-full h-64 object-cover rounded mb-4"
             />
-            <p className="text-lg mb-2">価格: ¥{product.price}</p>
-            <p className="mb-2">商品説明: {product.description}</p>
-            <div>
-                <h2 className="font-semibold">季節:</h2>
-                <ul className="flex gap-2 mt-1">
+
+            {/* 値段 */}
+            <p className="text-lg font-semibold mb-2">価格: ¥{product.price}</p>
+
+            {/* 商品説明 */}
+            <p className="mb-4">{product.description}</p>
+
+            {/* 季節タグ */}
+            <div className="mb-4">
+                <h2 className="font-semibold mb-2">季節:</h2>
+                <div className="flex gap-2">
                     {product.seasons.map((season) => (
-                        <li key={season.id} className="px-2 py-1 bg-gray-200 rounded">
+                        <span
+                            key={season.id}
+                            className="px-3 py-1 bg-gray-200 rounded-full text-sm"
+                        >
                             {season.name}
-                        </li>
+                        </span>
                     ))}
-                </ul>
+                </div>
+            </div>
+
+            {/* ボタン操作 */}
+            <div className="flex justify-between mt-6">
+                <button
+                    onClick={() => router.push("/products")}
+                    className="bg-gray-400 text-white px-4 py-2 rounded"
+                >
+                    戻る
+                </button>
+                <button
+                    onClick={() => router.push(`/products/${product.id}/edit`)}
+                    className="bg-yellow-500 text-white px-4 py-2 rounded"
+                >
+                    編集する
+                </button>
             </div>
         </div>
     );
 }
+
+// async function getProduct(id: string): Promise<Product | null> {
+//     try {
+//         const res = await fetch(`http://localhost/api/products/${id}`, {
+//             cache: "no-store", // 最新データを取得
+//         });
+//         if (!res.ok) return null;
+//         return res.json();
+//     } catch {
+//         return null;
+//     }
+// }
+
+// export default async function ProductPage({ params }: { params: { id: string } }) {
+//     const product = await getProduct(params.id);
+
+//     if (!product) {
+//         notFound();
+//     }
+
+//     return (
+//         <div className="max-w-3xl mx-auto p-6">
+//             <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
+//             <img
+//                 src={`http://localhost/storage/${product.image}`}
+//                 alt={product.name}
+//                 className="w-full h-64 object-cover rounded mb-4"
+//             />
+//             <p className="text-lg mb-2">価格: ¥{product.price}</p>
+//             <p className="mb-2">商品説明: {product.description}</p>
+//             <div>
+//                 <h2 className="font-semibold">季節:</h2>
+//                 <ul className="flex gap-2 mt-1">
+//                     {product.seasons.map((season) => (
+//                         <li key={season.id} className="px-2 py-1 bg-gray-200 rounded">
+//                             {season.name}
+//                         </li>
+//                     ))}
+//                 </ul>
+//             </div>
+//         </div>
+//     );
+// }
