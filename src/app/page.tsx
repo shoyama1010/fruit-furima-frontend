@@ -1,61 +1,4 @@
 
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import Link from "next/link";
-
-// type Season = {
-//   id: number;
-//   name: string;
-// };
-
-// type Product = {
-//   id: number;
-//   name: string;
-//   price: number;
-//   image: string;
-//   description: string;
-//   seasons: Season[];
-// };
-
-// export default function Home() {
-//   const [products, setProducts] = useState<Product[]>([]);
-
-//   useEffect(() => {
-//     fetch("http://localhost/api/products")
-//       .then((res) => res.json())
-//       .then((data) => setProducts(data))
-//       .catch((err) => console.error(err));
-//   }, []);
-
-//   return (
-//     <main className="max-w-6xl mx-auto p-6">
-//       <h1 className="text-2xl font-bold mb-6">商品一覧</h1>
-
-//       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//         {products.map((product) => (
-//           <Link
-//             key={product.id}
-//             href={`/products/${product.id}`}
-//             className="block"
-//           >
-//             <div className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition cursor-pointer">
-//               <img
-//                 src={`http://localhost/storage/${product.image}`}
-//                 alt={product.name}
-//                 className="w-full h-48 object-cover"
-//               />
-//               <div className="p-4">
-//                 <h2 className="text-lg font-bold">{product.name}</h2>
-//                 <p className="text-gray-600">¥{product.price}</p>
-//               </div>
-//             </div>
-//           </Link>
-//         ))}
-//       </div>
-//     </main>
-//   );
-// }
 
 // src/app/page.tsx
 "use client";
@@ -79,20 +22,25 @@ export default function ProductsPage() {
   useEffect((): void => {
     const fetchProducts = async (): Promise<void> => {
       try {
-      const query = new URLSearchParams();
-      if (search) query.append("search", search);
-      if (sort) query.append("sort", sort);
+        const query = new URLSearchParams();
+        if (search) query.append("search", search);
+        if (sort) query.append("sort", sort);
 
-      const res = await fetch(`http://localhost/api/products?${query.toString()}`, {
-        credentials: "include",
-      });
+        // const res = await fetch(`http://localhost/api/products?${query.toString()}`, {
+        //   credentials: "include",
+        // });
+        const res = await fetch(`http://localhost/api/products?${query.toString()}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-      if (!res.ok) throw new Error("商品データの取得に失敗しました");
+        if (!res.ok) throw new Error("商品データの取得に失敗しました");
 
         const data = await res.json();
-        console.log("API Response:", data); // 👈 これで実際のレスポンス形式を確認
-        setProducts(data.data || []);
         
+        setProducts(data.data || []);
+
       } catch (err) {
         console.error(err);
         setProducts([]);
@@ -149,17 +97,17 @@ export default function ProductsPage() {
 
             <Link key={product.id} href={`/products/${product.id}`}>
 
-            <div key={product.id} className="bg-white rounded shadow p-4">
-              <img
-                // src={`http://localhost/storage/${product.image}`}
-                src={`http://localhost/storage/${product.image}`}
-                alt={product.name}
-                className="w-full h-40 object-cover rounded mb-2"
-              />
-              <p className="font-bold">{product.name}</p>
-              <p>¥{product.price}</p>
+              <div key={product.id} className="bg-white rounded shadow p-4">
+                <img
+                  // src={`http://localhost/storage/${product.image}`}
+                  src={`http://localhost/storage/${product.image}`}
+                  alt={product.name}
+                  className="w-full h-40 object-cover rounded mb-2"
+                />
+                <p className="font-bold">{product.name}</p>
+                <p>¥{product.price}</p>
               </div>
-              </Link>
+            </Link>
           ))}
         </div>
       </main>

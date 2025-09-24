@@ -1,7 +1,7 @@
 // src/app/products/create/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
@@ -18,6 +18,36 @@ export default function ProductCreatePage() {
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
     const [preview, setPreview] = useState<string | null>(null);
 
+    // ✅ ここを追加（ログインチェック）
+    // useEffect(() => {
+    //     const checkLogin = async () => {
+    //         try {
+    //             const res = await fetch("http://localhost/api/user", {
+    //                 // credentials: "include",
+    //                 headers: { "Content-Type": "application/json" }
+    //             });
+    //             // if (!res.ok) {
+    //             //     router.push("/login"); // 未ログインならログイン画面へ
+    //             // }
+    //             if (!res.ok) throw new Error("登録失敗");
+    //             alert("商品を登録しました！");
+    //             router.push("/products");
+    //         } catch (err) {
+    //             console.error(err);
+    //             // router.push("/login"); // エラーでも安全のためログイン画面へ
+    //             alert("商品登録に失敗しました");
+    //         }
+    //     };
+    //     // checkLogin();
+    //     return (
+    //         <div>
+    //             {/* フォームUIはそのまま */}
+    //         </div>
+    //     );
+    // }, []);
+        // [router]);
+    //✅ 追加ここまで
+
     // プレビュー表示
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -26,6 +56,7 @@ export default function ProductCreatePage() {
         }
     };
 
+    // 登録処理
     const onSubmit = async (data: FormData) => {
         const formData = new FormData();
         formData.append("name", data.name);
@@ -35,20 +66,26 @@ export default function ProductCreatePage() {
         if (data.image?.[0]) {
             formData.append("image", data.image[0]);
         }
+
         data.seasons.forEach(season => formData.append("seasons[]", season));
 
         try {
             const res = await fetch("http://localhost/api/products", {
                 method: "POST",
                 body: formData,
-                credentials: "include",
+                // credentials: "include",
                 headers: { "Accept": "application/json" }
             });
+
+            // デバッグ追加
+            const debug = await res.text();
+            console.log("API Response:", res.status, debug);
 
             if (!res.ok) throw new Error("登録失敗");
 
             alert("商品を登録しました！");
             router.push("/products");
+
         } catch (err) {
             console.error(err);
             alert("エラーが発生しました");

@@ -1,33 +1,56 @@
 "use client";
+
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+
+// ✅ Cookie を取得する関数を追加（コンポーネント外に置く）
+function getCookie(name: string) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+        return parts.pop()!.split(";").shift();
+    }
+}
 
 export default function LoginPage() {
-    const [form, setForm] = useState({ email: "", password: "" });
     const router = useRouter();
+    const searchParams = useSearchParams(); // ← redirect パラメータを取る
+    const redirect = searchParams.get("redirect") || "/dashboard"; // 無ければ dashboard
+
+    const [form, setForm] = useState({ email: "", password: "" });  
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         try {
+            // ✅ CSRF Cookie を先に取得
+            // await fetch("http://localhost/sanctum/csrf-cookie", {
+            //     method: "GET",
+            //     credentials: "include",
+            // });
+
+            // ✅ ログインAPIを呼ぶ
             const res = await fetch("http://localhost/api/login", {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                body: JSON.stringify(form),
+                headers: { 
+                    "Content-Type": "application/json", 
+                    "Accept": "application/json",
+                    
+                },
+                // credentials: "include", // ← Cookie を保持 (Sanctum必須) 
+                body: JSON.stringify(form), 
             });
-            const data = await res.json();
 
+            const data = await res.json();
             if (!res.ok) {
                 alert("ログイン失敗: " + (data.message || "不明なエラー"));
                 return;
             }
+    
+            alert("ログイン成功: " + form.email);
 
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("userEmail", form.email);
-
-            router.push("/dashboard");
-            
         } catch (error) {
-            console.error(error);
+            console.error("Login error:", error);
             alert("通信エラーが発生しました");
         }
     };
@@ -65,68 +88,3 @@ export default function LoginPage() {
 }
 
 
-// "use client";
-// import { useState } from "react";
-// import { useRouter } from "next/navigation";
-
-// export default function LoginPage() {
-//     const [form, setForm] = useState({ email: "", password: "" });
-//     const router = useRouter();
-
-//     const handleSubmit = async (e: React.FormEvent) => {
-//         e.preventDefault();
-
-//         try { 
-//             const res = await fetch("http://localhost/api/login", { 
-//             method: "POST",
-//                 headers: {
-//                     "Content-Type": "application/json",
-//                     "Accept": "application/json",
-//              },
-//                 body: JSON.stringify(form),
-//                 // credentials: "include", // クッキーを含める（Sanctum対応やCORSで有効）
-//         });
-            
-//             const data = await res.json();
-//             console.log("Login response:", data);
-
-//             if (!res.ok) {
-//                 // Laravel 側からのエラーメッセージを表示
-//                 alert("ログイン失敗: " + (data.message || "不明なエラー"));
-//                 return;
-//             }
-//             // token を保存
-//             localStorage.setItem("token", data.token);
-//             // alert("ログイン成功: " + data.user.email);
-//             alert("ログイン成功: " + form.email);
-            
-//             // ✅ ログイン後に /dashboard へ遷移
-//             router.push("/dashboard");
-
-//         } catch (error) {
-//             console.error("Login error:", error);
-//             alert("通信エラーが発生しました");
-//         }
-//     };
-
-//     return (
-//         <form onSubmit={handleSubmit} className="p-4">
-//             <input
-//                 type="email"
-//                 placeholder="メール"
-//                 value={form.email}
-//                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-//                 className="border p-2 mb-2 w-full"
-//             /><br />
-//             <input
-//                 type="password"
-//                 placeholder="パスワード"
-//                 value={form.password}
-//                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-//                 className="border p-2 mb-2 w-full"
-//             /><br />
-//             <button type="submit"
-//                 className="mt-4 px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-600">ログイン</button>
-//         </form>
-//     );
-// }
