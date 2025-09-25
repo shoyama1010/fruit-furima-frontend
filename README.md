@@ -28,6 +28,8 @@ http://localhost/3000
 
 ・Node.js
 
+・TypeScript（型定義は最小限）
+
 ・html
 
 ・css(Tailwind CSS)
