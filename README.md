@@ -4,6 +4,10 @@
 <img width="1737" height="867" alt="Image" src="https://github.com/user-attachments/assets/bf23d842-acb7-4cc1-9443-1abd2425363b" />
 
 # 作成した目的
+Laravel Blade での従来の CRUD から、API 経由での CRUD に切り替える中で、
+Next.js を利用して SPA 開発を実践し、フロントエンドの理解を深める中で、SEO対策を兼ねております。
+バリデーション・画像アップロード・検索/ソートなど、実務でよく利用される機能を API 経由で扱えるよう理解し、
+将来的には Sanctum を用いたログイン認証を実装し、より実用的なアプリケーションへ拡張することを目標とする。
 
 # アプリケーションURL
 ローカル環境
