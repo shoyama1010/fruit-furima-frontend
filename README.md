@@ -30,6 +30,10 @@ http://localhost/3000
 
 ・TypeScript（型定義は最小限）
 
+・Webpack（Next.js 内部で使用）
+
+・Babel（Next.js 内部で使用）
+
 ・html
 
 ・css(Tailwind CSS)
