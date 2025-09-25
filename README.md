@@ -28,6 +28,11 @@ http://localhost/3000
 
 ・Node.js
 
+・html
+
+・css(Tailwind CSS)
+
+
 # 環境構築
 
 
