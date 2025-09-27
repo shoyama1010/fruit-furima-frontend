@@ -54,6 +54,20 @@ npm install
 
 ## 3. 環境変数ファイルを作成
 
+.env.local をプロジェクト直下に作成し、以下を設定してください。
+（API エンドポイントをバックエンド側 Laravel の URL に合わせてください）
+
+NEXT_PUBLIC_API_BASE_URL=http://localhost/api
+
+## 4. 開発サーバーを起動
+
+npm run dev
+
+## 5. ビルド（本番用）
+
+npm run build
+npm run start
+
 
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
