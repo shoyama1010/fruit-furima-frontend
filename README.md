@@ -38,6 +38,8 @@ http://localhost/3000
 
 ・css(Tailwind CSS)
 
+・Redux 未使用、React Hooks による状態管理
+
 
 # 環境構築
 
