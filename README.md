@@ -43,6 +43,18 @@ http://localhost/3000
 
 # 環境構築
 
+## 1. リポジトリをクローン
+
+git clone https://github.com/shoyama1010/fruit-furima-frontend.git
+cd fruit-furima-frontend
+
+## 2.　パッケージをインストール
+
+npm install
+
+## 3. 環境変数ファイルを作成
+
+
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
