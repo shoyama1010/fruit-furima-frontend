@@ -46,6 +46,7 @@ http://localhost/3000
 ## 1. リポジトリをクローン
 
 git clone https://github.com/shoyama1010/fruit-furima-frontend.git
+
 cd fruit-furima-frontend
 
 ## 2.　パッケージをインストール
@@ -55,6 +56,7 @@ npm install
 ## 3. 環境変数ファイルを作成
 
 .env.local をプロジェクト直下に作成し、以下を設定してください。
+
 （API エンドポイントをバックエンド側 Laravel の URL に合わせてください）
 
 NEXT_PUBLIC_API_BASE_URL=http://localhost/api
@@ -65,9 +67,9 @@ npm run dev
 
 ## 5. ビルド（本番用）
 
-# npm run build
+npm run build
 
-# npm run start
+npm run start
 
 ###########################################################################
 
