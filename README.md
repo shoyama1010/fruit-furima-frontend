@@ -65,8 +65,9 @@ npm run dev
 
 ## 5. ビルド（本番用）
 
-・npm run build
-・npm run start
+# npm run build
+
+# npm run start
 
 ###########################################################################
 
