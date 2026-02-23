@@ -1,10 +1,9 @@
-
-
-// src/app/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Product {
   id: number;
@@ -14,33 +13,64 @@ interface Product {
 }
 
 export default function ProductsPage() {
+  const router = useRouter();
+  // interface User {
+  //   id: number;
+  //   name: string;
+  //   // 他に必要なユーザープロパティがあればここに追加
+  // }
+  // const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
 
-  // 商品取得（検索・ソート付き）
-  useEffect((): void => {
-    const fetchProducts = async (): Promise<void> => {
+  // 🔐 ログイン確認
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("http://localhost/api/user", {
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          router.replace("/login");
+          return;
+        }
+        
+        const userData = await res.json();
+        // const data = await res.json();
+        setUser(userData);
+
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  // 📦 商品取得
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchProducts = async () => {
       try {
         const query = new URLSearchParams();
         if (search) query.append("search", search);
         if (sort) query.append("sort", sort);
 
-        // const res = await fetch(`http://localhost/api/products?${query.toString()}`, {
-        //   credentials: "include",
-        // });
-        const res = await fetch(`http://localhost/api/products?${query.toString()}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const res = await fetch(
+          `http://localhost/api/products?${query.toString()}`,
+          {
+            credentials: "include",
+          }
+        );
 
-        if (!res.ok) throw new Error("商品データの取得に失敗しました");
+        if (!res.ok) throw new Error("商品取得失敗");
 
         const data = await res.json();
-        
         setProducts(data.data || []);
-
       } catch (err) {
         console.error(err);
         setProducts([]);
@@ -48,13 +78,15 @@ export default function ProductsPage() {
     };
 
     fetchProducts();
-  }, [search, sort]);
+  }, [search, sort, user]);
+
+  if (!user) return <div>Loading...</div>;
 
   return (
     <div className="flex max-w-6xl mx-auto mt-8">
-      {/* 左：検索＆ソート */}
       <aside className="w-1/4 pr-6">
         <h2 className="text-xl font-bold mb-4">商品一覧</h2>
+
         <input
           type="text"
           placeholder="商品名で検索"
@@ -62,12 +94,6 @@ export default function ProductsPage() {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full border px-3 py-2 mb-2 rounded"
         />
-        <button
-          onClick={() => setSearch(search)}
-          className="w-full bg-yellow-400 text-white py-2 rounded mb-4"
-        >
-          検索
-        </button>
 
         <label className="block mb-2">価格で並べ替え:</label>
         <select
@@ -81,7 +107,6 @@ export default function ProductsPage() {
         </select>
       </aside>
 
-      {/* 右：商品一覧 */}
       <main className="flex-1">
         <div className="flex justify-end mb-4">
           <Link
@@ -94,15 +119,15 @@ export default function ProductsPage() {
 
         <div className="grid grid-cols-3 gap-6">
           {products.map((product) => (
-
             <Link key={product.id} href={`/products/${product.id}`}>
-
-              <div key={product.id} className="bg-white rounded shadow p-4">
-                <img
-                  // src={`http://localhost/storage/${product.image}`}
+              <div className="bg-white rounded shadow p-4">
+                <Image
                   src={`http://localhost/storage/${product.image}`}
                   alt={product.name}
+                  width={400}
+                  height={160}
                   className="w-full h-40 object-cover rounded mb-2"
+                  unoptimized
                 />
                 <p className="font-bold">{product.name}</p>
                 <p>¥{product.price}</p>
@@ -114,4 +139,3 @@ export default function ProductsPage() {
     </div>
   );
 }
-

@@ -14,31 +14,36 @@ function getCookie(name: string) {
 
 export default function LoginPage() {
     const router = useRouter();
-    const searchParams = useSearchParams(); // ← redirect パラメータを取る
-    const redirect = searchParams.get("redirect") || "/dashboard"; // 無ければ dashboard
 
-    const [form, setForm] = useState({ email: "", password: "" });  
+    const searchParams = useSearchParams(); // ← redirect パラメータを取る
+    const redirect = searchParams.get("redirect") || "/products"; // 無ければ /products
+    const [form, setForm] = useState({ email: "", password: "" });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
             // ✅ CSRF Cookie を先に取得
-            // await fetch("http://localhost/sanctum/csrf-cookie", {
-            //     method: "GET",
-            //     credentials: "include",
-            // });
+            await fetch("http://localhost/sanctum/csrf-cookie", {
+                // method: "GET",
+                credentials: "include",
+            });
+
+            // ✅ ② XSRFトークン取得
+            const xsrfToken = getCookie("XSRF-TOKEN");
 
             // ✅ ログインAPIを呼ぶ
             const res = await fetch("http://localhost/api/login", {
                 method: "POST",
-                headers: { 
-                    "Content-Type": "application/json", 
+                credentials: "include", // ← Cookie を保持 (Sanctum必須)
+                headers: {
+                    "Content-Type": "application/json",
                     "Accept": "application/json",
-                    
+                    // ↓追加
+                    "X-XSRF-TOKEN": decodeURIComponent(xsrfToken || ""),
                 },
-                // credentials: "include", // ← Cookie を保持 (Sanctum必須) 
-                body: JSON.stringify(form), 
+                 
+                body: JSON.stringify(form),
             });
 
             const data = await res.json();
@@ -46,8 +51,18 @@ export default function LoginPage() {
                 alert("ログイン失敗: " + (data.message || "不明なエラー"));
                 return;
             }
-    
-            alert("ログイン成功: " + form.email);
+
+            const userRes = await fetch("http://localhost/api/user", {
+                credentials: "include",
+            });
+
+            // const userData = await userRes.json();
+            if (userRes.ok) {
+                alert("ログイン成功");
+                router.push(redirect); // リダイレクト処理
+            } else {
+                alert("ユーザー情報取得失敗");
+            }
 
         } catch (error) {
             console.error("Login error:", error);
@@ -86,5 +101,3 @@ export default function LoginPage() {
         </div>
     );
 }
-
-

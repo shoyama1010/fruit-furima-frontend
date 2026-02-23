@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { notFound, useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface Season {
     id: number;
@@ -49,10 +50,14 @@ export default function ProductDetailPage() {
             <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
 
             {/* 画像 */}
-            <img
+            <Image
                 src={`http://localhost/storage/${product.image}`}
                 alt={product.name}
+                width={800}
+                height={256}
                 className="w-full h-64 object-cover rounded mb-4"
+                style={{ width: "100%", height: "256px", objectFit: "cover" }}
+                unoptimized
             />
 
             {/* 値段 */}

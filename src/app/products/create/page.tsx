@@ -19,33 +19,28 @@ export default function ProductCreatePage() {
     const [preview, setPreview] = useState<string | null>(null);
 
     // ✅ ここを追加（ログインチェック）
-    // useEffect(() => {
-    //     const checkLogin = async () => {
-    //         try {
-    //             const res = await fetch("http://localhost/api/user", {
-    //                 // credentials: "include",
-    //                 headers: { "Content-Type": "application/json" }
-    //             });
-    //             // if (!res.ok) {
-    //             //     router.push("/login"); // 未ログインならログイン画面へ
-    //             // }
-    //             if (!res.ok) throw new Error("登録失敗");
-    //             alert("商品を登録しました！");
-    //             router.push("/products");
-    //         } catch (err) {
-    //             console.error(err);
-    //             // router.push("/login"); // エラーでも安全のためログイン画面へ
-    //             alert("商品登録に失敗しました");
-    //         }
-    //     };
-    //     // checkLogin();
-    //     return (
-    //         <div>
-    //             {/* フォームUIはそのまま */}
-    //         </div>
-    //     );
-    // }, []);
-        // [router]);
+    useEffect(() => {
+        const checkLogin = async () => {
+            try {
+                const res = await fetch("http://localhost/api/user", {
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" }
+                });
+                if (!res.ok) {
+                    router.push("/login"); // 未ログインならログイン画面へ
+                }
+                if (!res.ok) throw new Error("登録失敗");
+                alert("商品を登録しました！");
+                router.push("/products");
+            } catch (err) {
+                console.error(err);
+                // router.push("/login"); // エラーでも安全のためログイン画面へ
+                alert("商品登録に失敗しました");
+            }
+        };
+        // checkLogin();
+        // フォームUIはそのまま
+    }, [router]);
     //✅ 追加ここまで
 
     // プレビュー表示
@@ -73,7 +68,7 @@ export default function ProductCreatePage() {
             const res = await fetch("http://localhost/api/products", {
                 method: "POST",
                 body: formData,
-                // credentials: "include",
+                credentials: "include",
                 headers: { "Accept": "application/json" }
             });
 

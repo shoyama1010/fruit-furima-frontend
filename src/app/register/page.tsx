@@ -8,6 +8,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
       const res = await fetch("http://localhost/api/register", {
         method: "POST",
@@ -29,6 +30,7 @@ export default function RegisterPage() {
 
       alert("登録成功: " + data.user.email);
       router.push("/dashboard");
+      
     } catch (error) {
       console.error("Register error:", error);
       alert("通信エラーが発生しました");
