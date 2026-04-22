@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function ProfilePage() {
     const [profile, setProfile] = useState<any>(null);
@@ -9,20 +10,24 @@ export default function ProfilePage() {
     const router = useRouter();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("ログインしてください");
-            router.push("/login");
-            return;
-        }
-
-        const fetchProfile = async () => {
+        
+        const checkAuthAndFetch = async () => {
             try {
+                // 🔐 ログイン確認
+                const userRes = await fetch("http://localhost/api/user", {
+                    credentials: "include",
+                });
+
+                if (!userRes.ok) {
+                    alert("ログインしてください");
+                    router.push("/login");
+                    return;
+                }
+
+                // 👤 プロフィール取得
                 const res = await fetch("http://localhost/api/profile", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: "application/json",
-                    },
+                    credentials: "include",
+                    
                 });
 
                 if (!res.ok) throw new Error("プロフィール取得失敗");
@@ -36,8 +41,7 @@ export default function ProfilePage() {
                 setLoading(false);
             }
         };
-
-        fetchProfile();
+        checkAuthAndFetch();
     }, [router]);
 
     if (loading) return <p className="p-6">読み込み中...</p>;
@@ -52,19 +56,22 @@ export default function ProfilePage() {
                         {/* アイコン */}
                         {profile.img_url && (
                             <div className="flex justify-center">
-                                <img
-                                    src={`http://localhost/storage/${profile.img_url}`}
+                                <Image
+                                    src={`http://localhost/${profile.img_url}`}
+                                    // src={`http://localhost/storage/${profile.img_url}`}
                                     alt="プロフィール画像"
-                                    className="w-24 h-24 rounded-full object-cover"
+                                    width={96}
+                                    height={96}
+                                    className="rounded-full object-cover"
                                 />
                             </div>
                         )}
 
                         {/* ユーザー情報 */}
-                        <p><strong>ユーザー名:</strong> {profile?.user?.name}</p>
-                        <p><strong>郵便番号:</strong> {profile?.profile?.postcode}</p>
-                        <p><strong>住所:</strong> {profile?.profile?.address}</p>
-                        <p><strong>電話番号:</strong> {profile?.profile?.phone_number}</p>
+                        <p><strong>ユーザー名:</strong> {profile?.name}</p>
+                        <p><strong>郵便番号:</strong> {profile?.postcode}</p>
+                        <p><strong>住所:</strong> {profile?.address}</p>
+                        <p><strong>電話番号:</strong> {profile?.phone_number}</p>
 
                         {/* 編集ボタン */}
                         <button

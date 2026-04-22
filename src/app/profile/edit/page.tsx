@@ -1,45 +1,59 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+type ProfileForm = {
+    name: string;
+    postcode: string;
+    address: string;
+    phone_number: string;
+    img_url: File | null;
+};
+
 export default function ProfileEditPage() {
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<ProfileForm>({
         name: "",
         postcode: "",
         address: "",
-        phone: "",
-        img_url: null as File | null,
+        phone_number: "",
+        img_url: null,
     });
+
     const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
     const router = useRouter();
 
-    // 初期ロードでプロフィール取得
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("ログインしてください");
-            router.push("/login");
-            return;
-        }
-
         const fetchProfile = async () => {
             try {
-                const res = await fetch("http://localhost/api/profile", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: "application/json",
-                    },
+                // ログイン確認
+                const userRes = await fetch("http://localhost/api/user", {
+                    credentials: "include",
                 });
 
-                if (!res.ok) throw new Error("プロフィール取得失敗");
+                if (!userRes.ok) {
+                    alert("ログインしてください");
+                    router.push("/login");
+                    return;
+                }
+
+                // プロフィール取得
+                const res = await fetch("http://localhost/api/profile", {
+                    credentials: "include",
+                });
+
+                if (!res.ok) {
+                    throw new Error("プロフィール取得失敗");
+                }
 
                 const data = await res.json();
+
                 setForm({
-                    name: data.name || "",
-                    postcode: data.postcode || "",
-                    address: data.address || "",
-                    phone: data.phone || "",
+                    name: data.name ?? "",
+                    postcode: data.postcode ?? "",
+                    address: data.address ?? "",
+                    phone_number: data.phone_number ?? "",
                     img_url: null,
                 });
             } catch (err) {
@@ -53,39 +67,42 @@ export default function ProfileEditPage() {
         fetchProfile();
     }, [router]);
 
-    // 更新処理
+    const handleChange = (key: keyof Omit<ProfileForm, "img_url">, value: string) => {
+        setForm((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setForm((prev) => ({
+            ...prev,
+            img_url: e.target.files?.[0] ?? null,
+        }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("ログインしてください");
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append("name", form.name);
-        formData.append("postcode", form.postcode);
-        formData.append("address", form.address);
-        formData.append("phone", form.phone);
-        if (form.img_url) {
-            formData.append("img_url", form.img_url);
-        }
+        setSubmitting(true);
 
         try {
+            const formData = new FormData();
+            formData.append("name", form.name);
+            formData.append("postcode", form.postcode);
+            formData.append("address", form.address);
+            formData.append("phone_number", form.phone_number);
+
+            if (form.img_url) {
+                formData.append("img_url", form.img_url);
+            }
+
+            // Laravel 側を PUT ルートにしている場合の method spoofing
+            formData.append("_method", "PUT");
+
             const res = await fetch("http://localhost/api/profile", {
                 method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    postcode: form.postcode,
-                    address: form.address,
-                    phone_number: form.phone, // ← DBと一致させる
-                })
-                // body: formData,
+                credentials: "include",
+                body: formData,
             });
 
             const data = await res.json();
@@ -95,84 +112,81 @@ export default function ProfileEditPage() {
                 return;
             }
 
-            alert("プロフィール更新成功！");
-            router.push("/profile"); // 更新後にプロフィール画面へ戻す
+            alert("プロフィールを更新しました");
+            router.push("/profile");
         } catch (err) {
             console.error(err);
             alert("通信エラーが発生しました");
+        } finally {
+            setSubmitting(false);
         }
     };
 
-    if (loading) return <p className="p-6">読み込み中...</p>;
+    if (loading) {
+        return <p className="p-6">読み込み中...</p>;
+    }
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
             <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
                 <h1 className="text-2xl font-bold mb-6 text-center">プロフィール設定</h1>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* プロフィール画像 */}
+
                     <div className="flex flex-col items-center">
-                        <label className="text-sm text-gray-600 mb-2">プロフィール画像</label>
-                        <input
+                        <label htmlFor="profile-image" className="text-sm text-gray-600 mb-2">プロフィール画像</label>
+
+                        <input id="profile-image"
                             type="file"
-                            accept="image/*"
-                            onChange={(e) =>
-                                setForm({ ...form, img_url: e.target.files ? e.target.files[0] : null })
-                            }
-                        />
+                            accept="image/*" onChange={handleFileChange} />
                     </div>
 
-                    {/* ユーザー名 */}
                     <div>
                         <label className="block text-sm font-medium mb-1">ユーザー名</label>
                         <input
                             type="text"
                             value={form.name}
-                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                            onChange={(e) => handleChange("name", e.target.value)}
                             className="w-full border px-3 py-2 rounded"
                         />
                     </div>
 
-                    {/* 郵便番号 */}
                     <div>
                         <label className="block text-sm font-medium mb-1">郵便番号</label>
                         <input
                             type="text"
                             value={form.postcode}
-                            onChange={(e) => setForm({ ...form, postcode: e.target.value })}
+                            onChange={(e) => handleChange("postcode", e.target.value)}
                             className="w-full border px-3 py-2 rounded"
                         />
                     </div>
 
-                    {/* 住所 */}
                     <div>
                         <label className="block text-sm font-medium mb-1">住所</label>
                         <input
                             type="text"
                             value={form.address}
-                            onChange={(e) => setForm({ ...form, address: e.target.value })}
+                            onChange={(e) => handleChange("address", e.target.value)}
                             className="w-full border px-3 py-2 rounded"
                         />
                     </div>
 
-                    {/* 電話番号 */}
                     <div>
                         <label className="block text-sm font-medium mb-1">電話番号</label>
                         <input
                             type="text"
-                            name="phone_number"  // ← 追加・・・これが重要！
-                            value={form.phone}
-                            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                            value={form.phone_number}
+                            onChange={(e) => handleChange("phone_number", e.target.value)}
                             className="w-full border px-3 py-2 rounded"
                         />
                     </div>
 
                     <button
                         type="submit"
-                        className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
+                        disabled={submitting}
+                        className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 disabled:opacity-60"
                     >
-                        更新する
+                        {submitting ? "更新中..." : "更新する"}
                     </button>
                 </form>
             </div>

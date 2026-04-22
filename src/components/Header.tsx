@@ -53,7 +53,7 @@ export default function Header() {
                             </span>
 
                             <Link href="/profile" className="hover:text-orange-500">
-                                マイページ
+                                プロフィール
                             </Link>
 
                             <button
