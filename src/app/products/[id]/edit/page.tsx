@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import Image from "next/image";
 
 interface Season {
     id: number;
@@ -88,6 +89,33 @@ export default function ProductEditPage() {
         }
     };
 
+    // 削除処理
+    const handleDelete = async () => {
+        const ok = window.confirm("本当に削除しますか？");
+        if (!ok) return;
+
+        try {
+            const res = await fetch(`http://localhost/api/products/${params.id}`, {
+                method: "DELETE",
+                credentials: "include",
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.message || "削除に失敗しました");
+                return;
+            }
+
+            alert("商品を削除しました");
+            router.push("/products");
+        } catch (error) {
+            console.error(error);
+            alert("削除時にエラーが発生しました");
+        }
+    };
+
+
     if (!product) return <p className="text-center mt-10">読み込み中...</p>;
 
     return (
@@ -148,9 +176,11 @@ export default function ProductEditPage() {
                     <label className="block mb-1 font-semibold">商品画像</label>
                     <input type="file" {...register("image")} />
                     {product.image && (
-                        <img
+                        <Image
                             src={`http://localhost/storage/${product.image}`}
                             alt={product.name}
+                            width={160}
+                            height={160}
                             className="w-40 h-40 object-cover mt-2 rounded"
                         />
                     )}
@@ -170,6 +200,14 @@ export default function ProductEditPage() {
                         className="bg-yellow-500 text-white px-4 py-2 rounded"
                     >
                         変更を保存
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    >
+                        削除
                     </button>
                 </div>
             </form>
