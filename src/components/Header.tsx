@@ -55,7 +55,9 @@ export default function Header() {
                             <Link href="/profile" className="hover:text-orange-500">
                                 プロフィール
                             </Link>
-
+                            
+                            <Link href="/mypage">マイページ</Link>
+                            
                             <button
                                 onClick={async () => {
                                     await fetch("http://localhost/api/logout", {
