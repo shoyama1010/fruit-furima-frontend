@@ -21,7 +21,7 @@ http://localhost:3000
 
 <img width="1617" height="953" alt="Image" src="https://github.com/user-attachments/assets/eca9c91d-fb57-4674-a260-e8f62949063b" />
 
-<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/5a254b47-8791-4c8d-83ad-d85d0dbd62d4" />
+
 
 <img width="1648" height="957" alt="Image" src="https://github.com/user-attachments/assets/7da3035a-b2c8-4818-8561-f2b51dc2e2a3" />
 
