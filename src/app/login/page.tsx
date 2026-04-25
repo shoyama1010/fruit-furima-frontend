@@ -59,7 +59,8 @@ export default function LoginPage() {
             // const userData = await userRes.json();
             if (userRes.ok) {
                 alert("ログイン成功");
-                router.push(redirect); // リダイレクト処理
+                window.location.href = "/products";
+                // router.push(redirect); // リダイレクト処理
             } else {
                 alert("ユーザー情報取得失敗");
             }
