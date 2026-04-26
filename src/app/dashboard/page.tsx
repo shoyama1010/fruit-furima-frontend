@@ -5,7 +5,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
-    const [user, setUser] = useState<any>(null);
+    // const [user, setUser] = useState<any>(null);
+    type User = {
+        id: number;
+        name: string;
+        email: string;
+    };
+    const [user, setUser] = useState<User | null>(null);
     const router = useRouter();
 
     useEffect(() => {

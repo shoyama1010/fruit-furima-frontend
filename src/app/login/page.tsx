@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 // ✅ Cookie を取得する関数を追加（コンポーネント外に置く）
 function getCookie(name: string) {
@@ -15,8 +15,8 @@ function getCookie(name: string) {
 export default function LoginPage() {
     const router = useRouter();
 
-    const searchParams = useSearchParams(); // ← redirect パラメータを取る
-    const redirect = searchParams.get("redirect") || "/products"; // 無ければ /products
+    // const searchParams = useSearchParams(); // ← redirect パラメータを取る
+    // const redirect = searchParams.get("redirect") || "/products"; // 無ければ /products
     const [form, setForm] = useState({ email: "", password: "" });
 
     const handleSubmit = async (e: React.FormEvent) => {

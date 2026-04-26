@@ -14,8 +14,14 @@ interface Product {
 
 export default function ProductsPage() {
   const router = useRouter();
-
-  const [user, setUser] = useState<any>(null);
+  // const [user, setUser] = useState<any>(null);
+  type User = {
+    id: number;
+    name: string;
+    email: string;
+  };
+  const [user, setUser] = useState<User | null>(null);
+  
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
