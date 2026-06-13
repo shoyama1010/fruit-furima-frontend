@@ -83,6 +83,9 @@ export default function ProductEditPage() {
 
                 const productData: Product = await productRes.json();
 
+                console.log("商品user_id", productData.user_id);
+                console.log("ログインuser_id", user.id);
+
                 if (Number(productData.user_id) !== Number(user.id)) {
                     alert("この商品は編集できません。");
                     router.push(`/products/${productId}`);
