@@ -15,7 +15,7 @@ export default function Header() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch("http://localhost/api/user", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user`, {
                     credentials: "include",
                 });
 
@@ -60,7 +60,7 @@ export default function Header() {
                             
                             <button
                                 onClick={async () => {
-                                    await fetch("http://localhost/api/logout", {
+                                    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/logout`, {
                                         method: "POST",
                                         credentials: "include",
                                     });

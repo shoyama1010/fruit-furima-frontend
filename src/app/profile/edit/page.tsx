@@ -39,7 +39,7 @@ export default function ProfileEditPage() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const userRes = await fetch("http://localhost/api/user", {
+                const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user`, {
                     credentials: "include",
                 });
 
@@ -49,7 +49,7 @@ export default function ProfileEditPage() {
                     return;
                 }
 
-                const res = await fetch("http://localhost/api/profile", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/profile`, {
                     credentials: "include",
                     cache: "no-store",
                 });
@@ -129,7 +129,7 @@ export default function ProfileEditPage() {
 
             formData.append("_method", "PUT");
 
-            const res = await fetch("http://localhost/api/profile", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/profile`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -147,18 +147,18 @@ export default function ProfileEditPage() {
 
             if (!res.ok) {
                 setGeneralError(data.message || "プロフィール更新に失敗しました");
-                // alert(data.message || "プロフィール更新に失敗しました");
+                
                 return;
             }
-            // alert("プロフィールを更新しました");
+            
             setSuccessMessage("プロフィールを更新しました");
             setTimeout(() => {
                 router.push("/profile");
             }, 800)
-            // router.push("/profile");
+            
         } catch (err) {
             console.error(err);
-            // alert("通信エラーが発生しました");
+            
             setGeneralError("通信エラーが発生しました");
         } finally {
             setSubmitting(false);

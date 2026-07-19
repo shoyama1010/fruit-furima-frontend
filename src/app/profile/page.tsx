@@ -22,7 +22,7 @@ export default function ProfilePage() {
     useEffect(() => {
         const checkAuthAndFetch = async () => {
             try {
-                const userRes = await fetch("http://localhost/api/user", {
+                const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user`, {
                     credentials: "include",
                 });
 
@@ -32,7 +32,7 @@ export default function ProfilePage() {
                     return;
                 }
 
-                const res = await fetch("http://localhost/api/profile", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/profile`, {
                     credentials: "include",
                     cache: "no-store",
                 });
@@ -64,7 +64,7 @@ export default function ProfilePage() {
                         {profile.img_url && (
                             <div className="flex justify-center">
                                 <Image
-                                    src={`http://localhost/${profile.img_url}`}
+                                    src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/storage/${profile.img_url}`}
                                     alt="プロフィール画像"
                                     width={96}
                                     height={96}

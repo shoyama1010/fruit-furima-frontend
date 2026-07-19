@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
@@ -22,7 +23,7 @@ export default function ProductCreatePage() {
     useEffect(() => {
         const checkLogin = async () => {
             try {
-                const res = await fetch("http://localhost/api/user", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user`, {
                     credentials: "include",
                     headers: { "Content-Type": "application/json" }
                 });
@@ -65,7 +66,7 @@ export default function ProductCreatePage() {
         data.seasons.forEach(season => formData.append("seasons[]", season));
 
         try {
-            const res = await fetch("http://localhost/api/products", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products`, {
                 method: "POST",
                 body: formData,
                 credentials: "include",
@@ -125,7 +126,16 @@ export default function ProductCreatePage() {
                         className="block mt-1"
                     />
                     {errors.image && <p className="text-red-500 text-sm">{errors.image.message}</p>}
-                    {preview && <img src={preview} alt="プレビュー" className="mt-3 w-48 rounded shadow" />}
+                    {preview && (
+                        <Image
+                            src={preview}
+                            alt="プレビュー"
+                            width={192}
+                            height={192}
+                            unoptimized
+                            className="mt-3 w-48 rounded shadow object-cover"
+                        />
+                    )}
                 </div>
 
                 {/* 季節 */}

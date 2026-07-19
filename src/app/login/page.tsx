@@ -15,8 +15,6 @@ function getCookie(name: string) {
 export default function LoginPage() {
     const router = useRouter();
 
-    // const searchParams = useSearchParams(); // ← redirect パラメータを取る
-    // const redirect = searchParams.get("redirect") || "/products"; // 無ければ /products
     const [form, setForm] = useState({ email: "", password: "" });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -24,7 +22,7 @@ export default function LoginPage() {
 
         try {
             // ✅ CSRF Cookie を先に取得
-            await fetch("http://localhost/sanctum/csrf-cookie", {
+            await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/sanctum/csrf-cookie`, {
                 // method: "GET",
                 credentials: "include",
             });
@@ -33,7 +31,7 @@ export default function LoginPage() {
             const xsrfToken = getCookie("XSRF-TOKEN");
 
             // ✅ ログインAPIを呼ぶ
-            const res = await fetch("http://localhost/api/login", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/login`, {
                 method: "POST",
                 credentials: "include", // ← Cookie を保持 (Sanctum必須)
                 headers: {
@@ -52,7 +50,7 @@ export default function LoginPage() {
                 return;
             }
 
-            const userRes = await fetch("http://localhost/api/user", {
+            const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user`, {
                 credentials: "include",
             });
 
@@ -60,7 +58,6 @@ export default function LoginPage() {
             if (userRes.ok) {
                 alert("ログイン成功");
                 window.location.href = "/products";
-                // router.push(redirect); // リダイレクト処理
             } else {
                 alert("ユーザー情報取得失敗");
             }

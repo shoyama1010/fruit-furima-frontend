@@ -16,7 +16,7 @@ export default function DashboardPage() {
 
     useEffect(() => {
         const checkAuth = async () => {
-            const res = await fetch("http://localhost/api/user", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user`, {
                 credentials: "include",
             });
 

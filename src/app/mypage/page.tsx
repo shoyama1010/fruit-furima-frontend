@@ -21,7 +21,7 @@ export default function MyPage() {
     useEffect(() => {
         const fetchMyProducts = async () => {
             try {
-                const res = await fetch("http://localhost/api/my-products", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/my-products`, {
                     credentials: "include",
                     cache: "no-store",
                     headers: {
@@ -78,7 +78,7 @@ export default function MyPage() {
                             >
                                 {product.image && (
                                     <Image
-                                        src={`http://localhost/storage/${product.image}`}
+                                        src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/storage/${product.image}`}
                                         alt={product.name}
                                         width={400}
                                         height={240}

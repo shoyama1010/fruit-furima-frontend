@@ -14,7 +14,6 @@ interface Product {
 
 export default function ProductsPage() {
   const router = useRouter();
-  // const [user, setUser] = useState<any>(null);
   type User = {
     id: number;
     name: string;
@@ -32,7 +31,7 @@ export default function ProductsPage() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await fetch("http://localhost/api/user", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user`, {
           credentials: "include",
           headers: { Accept: "application/json" },
         });
@@ -66,7 +65,7 @@ export default function ProductsPage() {
         if (sort) query.append("sort", sort);
 
         const res = await fetch(
-          `http://localhost/api/products?${query.toString()}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products?${query.toString()}`,
           {
             credentials: "include",
             headers: { Accept: "application/json" },
@@ -78,7 +77,6 @@ export default function ProductsPage() {
         const data = await res.json();
 
         setProducts(data.data);
-        // setCurrentPage(data.current_page);
         setLastPage(data.last_page);
       } catch (err) {
         console.error(err);
@@ -139,7 +137,7 @@ export default function ProductsPage() {
                 <Link href={`/products/${product.id}`} key={product.id}>
                   <div className="bg-white rounded shadow p-4">
                     <Image
-                      src={`http://localhost/storage/${product.image}`}
+                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/storage/${product.image}`}
                       alt={product.name}
                       width={400}
                       height={160}

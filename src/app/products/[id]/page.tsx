@@ -27,8 +27,7 @@ export default function ProductDetailPage() {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const res = await fetch(`http://localhost/api/products/${params.id}`, {
-                
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${params.id}`, {
                     credentials: "include",
                 });
                 if (!res.ok) throw new Error("データ取得失敗");
@@ -51,7 +50,7 @@ export default function ProductDetailPage() {
 
             {/* 画像 */}
             <Image
-                src={`http://localhost/storage/${product.image}`}
+                src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/storage/${product.image}`}
                 alt={product.name}
                 width={800}
                 height={256}

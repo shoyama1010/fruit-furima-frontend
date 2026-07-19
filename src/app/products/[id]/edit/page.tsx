@@ -55,7 +55,7 @@ export default function ProductEditPage() {
             try {
                 setErrorMessage("");
 
-                const userRes = await fetch("http://localhost/api/user", {
+                const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user`, {
                     credentials: "include",
                     headers: { Accept: "application/json" },
                 });
@@ -68,7 +68,7 @@ export default function ProductEditPage() {
                 const user: User = await userRes.json();
 
                 const productRes = await fetch(
-                    `http://localhost/api/products/${productId}`,
+                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${productId}`,
                     {
                         credentials: "include",
                         headers: { Accept: "application/json" },
@@ -92,7 +92,7 @@ export default function ProductEditPage() {
                     return;
                 }
 
-                const seasonRes = await fetch("http://localhost/api/seasons", {
+                const seasonRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/seasons`, {
                     credentials: "include",
                     headers: { Accept: "application/json" },
                 });
@@ -139,7 +139,7 @@ export default function ProductEditPage() {
         formData.append("_method", "PUT");
 
         try {
-            const res = await fetch(`http://localhost/api/products/${productId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${productId}`, {
                 method: "POST",
                 body: formData,
                 credentials: "include",
@@ -174,7 +174,7 @@ export default function ProductEditPage() {
         setErrorMessage("");
 
         try {
-            const res = await fetch(`http://localhost/api/products/${productId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${productId}`, {
                 method: "DELETE",
                 credentials: "include",
                 headers: {
@@ -268,7 +268,7 @@ export default function ProductEditPage() {
 
                     {product.image && (
                         <Image
-                            src={`http://localhost/storage/${product.image}`}
+                            src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/storage/${product.image}`}
                             alt={product.name}
                             width={160}
                             height={160}
