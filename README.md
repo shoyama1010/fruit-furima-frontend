@@ -51,7 +51,7 @@ http://localhost:3000/login
 
 ##  認証制御
 
-- Cookie認証（credentials: include）
+- Bearer認証（Tocken発行）
 - 未ログイン時リダイレクト
 - 編集画面で所有者チェック
 
@@ -104,7 +104,7 @@ npm run build
 
 npm run start
 
-#　工夫した点
+# 工夫した点
 
 - React Hooksによる状態管理
 - API連携の非同期処理設計
@@ -112,6 +112,10 @@ npm run start
 - 検索・ソートの即時反映
 - フロント側での認可チェック
 - 他ユーザーの商品を編集できないように機能実装
+
+# 苦労した点
+
+本番環境に認証方法を変更した
 
 #　将来への改善点
 
