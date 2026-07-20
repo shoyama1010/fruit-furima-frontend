@@ -55,23 +55,39 @@ export default function ProductEditPage() {
             try {
                 setErrorMessage("");
 
-                const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user`, {
-                    credentials: "include",
-                    headers: { Accept: "application/json" },
-                });
+                const token = localStorage.getItem("auth_token");
+
+                if (!token) {
+                    router.replace("/login");
+                    return;
+                }
+
+                // ログインユーザー取得
+                const userRes = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user`,
+                    {
+                        headers: {
+                            Accept: "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
 
                 if (!userRes.ok) {
-                    router.push("/login");
+                    localStorage.removeItem("auth_token");
+                    router.replace("/login");
                     return;
                 }
 
                 const user: User = await userRes.json();
 
+                // 商品取得
                 const productRes = await fetch(
                     `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${productId}`,
                     {
-                        credentials: "include",
-                        headers: { Accept: "application/json" },
+                        headers: {
+                            Accept: "application/json",
+                        },
                         cache: "no-store",
                     }
                 );
@@ -83,22 +99,24 @@ export default function ProductEditPage() {
 
                 const productData: Product = await productRes.json();
 
-                console.log("商品user_id", productData.user_id);
-                console.log("ログインuser_id", user.id);
-
                 if (Number(productData.user_id) !== Number(user.id)) {
                     alert("この商品は編集できません。");
                     router.push(`/products/${productId}`);
                     return;
                 }
 
-                const seasonRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/seasons`, {
-                    credentials: "include",
-                    headers: { Accept: "application/json" },
-                });
+                // 季節一覧
+                const seasonRes = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/seasons`,
+                    {
+                        headers: {
+                            Accept: "application/json",
+                        },
+                    }
+                );
 
                 if (!seasonRes.ok) {
-                    throw new Error("季節データの取得に失敗しました");
+                    throw new Error("季節データ取得失敗");
                 }
 
                 const seasonData: Season[] = await seasonRes.json();
@@ -118,86 +136,121 @@ export default function ProductEditPage() {
         fetchData();
     }, [productId, router, setValue]);
 
+
     const onSubmit = async (data: ProductFormData) => {
+
         setErrorMessage("");
 
+        const token = localStorage.getItem("auth_token");
+
+        if (!token) {
+            router.replace("/login");
+            return;
+        }
+
         const formData = new FormData();
+
         formData.append("name", data.name);
         formData.append("price", data.price);
         formData.append("description", data.description);
 
-        if (data.image && data.image.length > 0) {
+        if (data.image?.length) {
             formData.append("image", data.image[0]);
         }
 
-        if (data.seasons) {
-            data.seasons.forEach((seasonId) => {
-                formData.append("seasons[]", seasonId);
-            });
-        }
+        data.seasons?.forEach((seasonId) => {
+            formData.append("seasons[]", seasonId);
+        });
 
         formData.append("_method", "PUT");
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${productId}`, {
-                method: "POST",
-                body: formData,
-                credentials: "include",
-                headers: {
-                    Accept: "application/json",
-                },
-            });
 
-            const responseData: ApiResponse = await res.json();
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${productId}`,
+                {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: formData,
+                }
+            );
+
+            const responseData = await res.json().catch(() => ({}));
+
+            if (res.status === 401) {
+                localStorage.removeItem("auth_token");
+                router.replace("/login");
+                return;
+            }
 
             if (res.status === 403) {
-                setErrorMessage(responseData.message || "この商品は編集できません。");
+                setErrorMessage(responseData.message ?? "編集できません");
                 return;
             }
 
             if (!res.ok) {
-                setErrorMessage(responseData.message || "更新に失敗しました。");
+                setErrorMessage(responseData.message ?? "更新失敗");
                 return;
             }
 
             router.push(`/products/${productId}`);
+
         } catch (err) {
             console.error(err);
-            setErrorMessage("通信エラーが発生しました。");
+            setErrorMessage("通信エラー");
         }
     };
 
     const handleDelete = async () => {
-        const ok = window.confirm("本当に削除しますか？");
-        if (!ok) return;
 
-        setErrorMessage("");
+        if (!confirm("本当に削除しますか？")) return;
+
+        const token = localStorage.getItem("auth_token");
+
+        if (!token) {
+            router.replace("/login");
+            return;
+        }
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${productId}`, {
-                method: "DELETE",
-                credentials: "include",
-                headers: {
-                    Accept: "application/json",
-                },
-            });
 
-            const responseData: ApiResponse = await res.json();
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${productId}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Accept: "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const responseData = await res.json().catch(() => ({}));
+
+            if (res.status === 401) {
+                localStorage.removeItem("auth_token");
+                router.replace("/login");
+                return;
+            }
 
             if (res.status === 403) {
-                setErrorMessage(responseData.message || "この商品は削除できません。");
+                setErrorMessage(responseData.message ?? "削除できません");
                 return;
             }
 
             if (!res.ok) {
-                setErrorMessage(responseData.message || "削除に失敗しました。");
+                setErrorMessage(responseData.message ?? "削除失敗");
                 return;
             }
 
             router.push("/mypage");
-        } catch (error) {
-            console.error(error);
-            setErrorMessage("削除時に通信エラーが発生しました。");
+
+        } catch (err) {
+            console.error(err);
+            setErrorMessage("通信エラー");
         }
     };
 

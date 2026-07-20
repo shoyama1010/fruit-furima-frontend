@@ -18,19 +18,33 @@ export default function MyPage() {
     const [errorMessage, setErrorMessage] = useState("");
     const router = useRouter();
 
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
     useEffect(() => {
         const fetchMyProducts = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/my-products`, {
-                    credentials: "include",
-                    cache: "no-store",
-                    headers: {
-                        Accept: "application/json",
-                    },
-                });
+                const token = localStorage.getItem("auth_token");
+
+                if (!token) {
+                    router.replace("/login");
+                    return;
+                }
+
+                const res = await fetch(
+                    `${API_BASE_URL}/api/my-products`,
+                    {
+                        method: "GET",
+                        cache: "no-store",
+                        headers: {
+                            Accept: "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
 
                 if (res.status === 401) {
-                    router.push("/login");
+                    localStorage.removeItem("auth_token");
+                    router.replace("/login");
                     return;
                 }
 
@@ -50,7 +64,7 @@ export default function MyPage() {
         };
 
         fetchMyProducts();
-    }, [router]);
+    }, [API_BASE_URL, router]);
 
     if (loading) {
         return <p className="p-6">読み込み中...</p>;
@@ -58,13 +72,19 @@ export default function MyPage() {
 
     return (
         <div className="max-w-5xl mx-auto py-10 px-4">
-            <h1 className="text-2xl font-bold mb-6">マイページ</h1>
+            <h1 className="text-2xl font-bold mb-6">
+                マイページ
+            </h1>
 
             <div className="bg-white rounded shadow p-6">
-                <h2 className="text-xl font-bold mb-4">出品した商品</h2>
+                <h2 className="text-xl font-bold mb-4">
+                    出品した商品
+                </h2>
 
                 {errorMessage && (
-                    <p className="mb-4 text-red-500">{errorMessage}</p>
+                    <p className="mb-4 text-red-500">
+                        {errorMessage}
+                    </p>
                 )}
 
                 {products.length === 0 ? (
@@ -78,7 +98,7 @@ export default function MyPage() {
                             >
                                 {product.image && (
                                     <Image
-                                        src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/storage/${product.image}`}
+                                        src={`${API_BASE_URL}/storage/${product.image}`}
                                         alt={product.name}
                                         width={400}
                                         height={240}
@@ -87,19 +107,30 @@ export default function MyPage() {
                                     />
                                 )}
 
-                                <h3 className="font-bold">{product.name}</h3>
+                                <h3 className="font-bold">
+                                    {product.name}
+                                </h3>
+
                                 <p>¥{product.price}</p>
 
                                 <div className="flex gap-2 mt-4">
                                     <button
-                                        onClick={() => router.push(`/products/${product.id}`)}
+                                        onClick={() =>
+                                            router.push(
+                                                `/products/${product.id}`
+                                            )
+                                        }
                                         className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
                                     >
                                         詳細
                                     </button>
 
                                     <button
-                                        onClick={() => router.push(`/products/${product.id}/edit`)}
+                                        onClick={() =>
+                                            router.push(
+                                                `/products/${product.id}/edit`
+                                            )
+                                        }
                                         className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
                                     >
                                         編集

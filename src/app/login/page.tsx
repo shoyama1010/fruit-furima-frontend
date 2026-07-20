@@ -15,59 +15,93 @@ function getCookie(name: string) {
 export default function LoginPage() {
     const router = useRouter();
 
-    const [form, setForm] = useState({ email: "", password: "" });
+    const [form, setForm] = useState({
+        email: "",
+        password: "",
+    });
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        if (!API_BASE_URL) {
+            alert("APIのURLが設定されていません");
+            return;
+        }
+
         try {
-            // ✅ CSRF Cookie を先に取得
-            await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/sanctum/csrf-cookie`, {
-                // method: "GET",
-                credentials: "include",
-            });
-
-            // ✅ ② XSRFトークン取得
-            const xsrfToken = getCookie("XSRF-TOKEN");
-
-            // ✅ ログインAPIを呼ぶ
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/login`, {
+            // ① メールアドレスとパスワードでログイン
+            const loginRes = await fetch(`${API_BASE_URL}/api/login`, {
                 method: "POST",
-                credentials: "include", // ← Cookie を保持 (Sanctum必須)
                 headers: {
+                    Accept: "application/json",
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    // ↓追加
-                    "X-XSRF-TOKEN": decodeURIComponent(xsrfToken || ""),
                 },
-                 
                 body: JSON.stringify(form),
             });
 
-            const data = await res.json();
-            if (!res.ok) {
-                alert("ログイン失敗: " + (data.message || "不明なエラー"));
+            const loginData = await loginRes.json().catch(() => null);
+
+            if (!loginRes.ok) {
+                console.error("ログイン失敗", {
+                    status: loginRes.status,
+                    data: loginData,
+                });
+
+                alert(
+                    `ログイン失敗: ${loginData?.message ?? `HTTP ${loginRes.status}`
+                    }`
+                );
                 return;
             }
 
-            const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user`, {
-                credentials: "include",
-            });
-
-            // const userData = await userRes.json();
-            if (userRes.ok) {
-                alert("ログイン成功");
-                window.location.href = "/products";
-            } else {
-                alert("ユーザー情報取得失敗");
+            if (!loginData?.token) {
+                console.error("トークンが返されていません", loginData);
+                alert("ログイン情報の取得に失敗しました");
+                return;
             }
 
+            // ② Sanctumトークンをブラウザに保存
+            localStorage.setItem("auth_token", loginData.token);
+
+            // ③ 保存したトークンでログインユーザーを取得
+            const userRes = await fetch(`${API_BASE_URL}/api/user`, {
+                method: "GET",
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${loginData.token}`,
+                },
+            });
+
+            const userData = await userRes.json().catch(() => null);
+
+            if (!userRes.ok) {
+                localStorage.removeItem("auth_token");
+
+                console.error("ユーザー情報取得失敗", {
+                    status: userRes.status,
+                    data: userData,
+                });
+
+                alert(
+                    `ユーザー情報取得失敗: ${userData?.message ?? `HTTP ${userRes.status}`
+                    }`
+                );
+                return;
+            }
+
+            console.log("ログインユーザー:", userData);
+
+            alert("ログイン成功");
+            window.location.href = "/products";
         } catch (error) {
             console.error("Login error:", error);
             alert("通信エラーが発生しました");
         }
     };
 
+    
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <form
