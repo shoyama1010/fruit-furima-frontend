@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
+import { getImageUrl } from "@/lib/getImageUrl";
 
 interface Season {
     id: number;
@@ -97,7 +98,7 @@ export default function ProductDetailPage() {
             </h1>
 
             <Image
-                src={`${API_BASE_URL}/storage/${product.image}`}
+                src={getImageUrl(product.image)}
                 alt={product.name}
                 width={800}
                 height={256}

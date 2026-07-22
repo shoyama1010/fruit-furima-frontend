@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { getImageUrl } from "@/lib/getImageUrl";
 
 interface Product {
   id: number;
@@ -172,8 +173,9 @@ export default function ProductsPage() {
               {products.map((product) => (
                 <Link href={`/products/${product.id}`} key={product.id}>
                   <div className="rounded bg-white p-4 shadow">
+                    
                     <Image
-                      src={`${API_BASE_URL}/storage/${product.image}`}
+                      src={getImageUrl(product.image)}
                       alt={product.name}
                       width={400}
                       height={160}

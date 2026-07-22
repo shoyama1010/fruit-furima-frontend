@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
+import { getImageUrl } from "@/lib/getImageUrl";
 
 type ProductFormData = {
     name: string;
@@ -320,9 +321,12 @@ export default function ProductEditPage() {
                     <input type="file" {...register("image")} />
 
                     {product.image && (
+
                         <Image
-                            src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/storage/${product.image}`}
+                            src={getImageUrl(product.image)}
                             alt={product.name}
+                            // width={400}
+                            // height={240}
                             width={160}
                             height={160}
                             className="w-40 h-40 object-cover mt-2 rounded"
