@@ -65,13 +65,11 @@ http://localhost:3000/login
 
 ・TypeScript（型定義は最小限）
 
-・Webpack（Next.js 内部で使用）
-
-・Babel（Next.js 内部で使用）
-
 ・css(Tailwind CSS)
 
-・React Hooks (＝状態管理)
+・API/Tocken
+
+・Vercel
 
 
 # 環境構築
@@ -112,10 +110,17 @@ npm run start
 - 検索・ソートの即時反映
 - フロント側での認可チェック
 - 他ユーザーの商品を編集できないように機能実装
+- LaravelをバックエンドAPI、Next.jsをフロントエンドとして分離し、RailwayとVercelへそれぞれデプロイした
+- 本番環境ではVercelとRailwayが別ドメインになるため、Cookieベース認証からSanctumのPersonal Access Token認証へ切り替えた
+- 商品一覧、商品詳細、商品登録、商品編集、商品削除、マイページ、プロフィールなど、認証が必要な画面ごとに共通した認証処理を実装した
+- APIエラー時にステータスコードやレスポンス内容を確認できるよう、フロント側でデバッグ出力を追加した
 
 # 苦労した点
 
-本番環境に認証方法を変更した
+- ローカル環境ではCookie認証が動いていたが、VercelとRailwayの別ドメイン構成ではセッションCookieが正しく送信されず、ログイン後の認証維持に苦労した
+- credentials: "include"を付けても本番環境では/api/userが401や500になり、Cookie認証とトークン認証の違いを整理する必要があった
+- Seederの画像パスを変更したあと、Next.js側が従来どおり/storage/を付けていたため、一覧や詳細画面で画像が表示されなかった
+- Laravel Controller内でDB::を使用していたにもかかわらずFacadeをimportしておらず、会員登録時にクラス未検出エラーが発生した
 
 #　将来への改善点
 
