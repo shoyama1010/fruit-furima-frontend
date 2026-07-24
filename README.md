@@ -104,7 +104,7 @@ npm run start
 
 # 工夫した点
 
-- React Hooksによる状態管理
+- React Hooksによる状態管理（useState・useEffect を用いて、APIから取得したデータやフォーム入力値を状態管理してる）
 - API連携における非同期処理の設計
 - ページネーションUIの実装
 - 検索・ソート機能の即時反映
