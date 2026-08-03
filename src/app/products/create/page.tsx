@@ -112,12 +112,10 @@ export default function ProductCreatePage() {
         }
 
         const token = localStorage.getItem("auth_token");
-
         if (!token) {
             router.replace("/login");
             return;
         }
-
         const formData = new FormData();
 
         formData.append("name", data.name);
@@ -145,13 +143,12 @@ export default function ProductCreatePage() {
             const responseData: ApiErrorResponse = await res
                 .json()
                 .catch(() => ({}));
-
+            
             if (res.status === 401) {
                 localStorage.removeItem("auth_token");
                 router.replace("/login");
                 return;
             }
-
             if (res.status === 422) {
                 const validationMessages = responseData.errors
                     ? Object.values(responseData.errors).flat().join("\n")
