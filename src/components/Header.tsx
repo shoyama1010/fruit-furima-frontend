@@ -84,7 +84,8 @@ export default function Header() {
                     href="/products"
                     className="text-2xl font-bold text-orange-500"
                 >
-                    mogitate
+                    {/* mogitate */}
+                    Kudamono
                 </Link>
 
                 <nav className="flex items-center space-x-6 text-sm">
