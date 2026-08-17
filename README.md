@@ -18,9 +18,18 @@ Next.js を利用して SPA 開発を実践し、フロントエンドの理解�
 
 http://localhost:3000/login
 
-- 本番環境
+## デモ
 
+本番環境：https://fruit-furima-frontend.vercel.app/login
 
+- デモ用アカウント
+
+公開環境では、以下のアカウントでログインして各機能をお試しいただけます。
+
+- メールアドレス：`test@example.com`
+- パスワード：`password`
+
+※ ポートフォリオ確認用のデモアカウントです。
 
 ##  画面イメージ
 
