@@ -60,7 +60,7 @@ http://localhost:3000/login
 
 ##  認証制御
 
-- Bearer認証（Tocken発行）
+- Bearer認証（Token発行）
 - 未ログイン時リダイレクト
 - 編集画面で所有者チェック
 
@@ -76,7 +76,7 @@ http://localhost:3000/login
 
 ・css(Tailwind CSS)
 
-・API/Tocken
+・API/Token
 
 ・Vercel
 
