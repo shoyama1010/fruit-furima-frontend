@@ -120,7 +120,7 @@ npm run start
 - フロントエンド側での認証チェック
 - 他ユーザーの商品を編集できないよう、所有者チェックを実装
 - LaravelをバックエンドAPI、Next.jsをフロントエンドとして分離し、RailwayとVercelへそれぞれデプロイ
-- VercelとRailwayが別ドメインになるため、Cookieベース認証からSanctumのPersonal Access Token認証へ変更
+- (ローカル開発ではSanctum Cookie認証を検証しましたが)VercelとRailwayが別ドメインになるため、最終的にCookieベース認証から,SanctumのPersonal Access Token認証へ変更
 - 商品一覧、商品詳細、商品登録、商品編集、商品削除、マイページ、プロフィールなど、認証が必要な画面で認証処理を共通化
 - APIエラー時にステータスコードやレスポンス内容を確認できるよう、フロントエンド側にデバッグ処理を追加
 
