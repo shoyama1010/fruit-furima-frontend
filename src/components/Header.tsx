@@ -79,7 +79,7 @@ export default function Header() {
 
     return (
         <header className="bg-white shadow">
-            <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
+            <div className="max-w-[1400px] mx-auto flex justify-between items-center px-6 py-4">
                 <Link
                     href="/products"
                     className="text-2xl font-bold text-orange-500"

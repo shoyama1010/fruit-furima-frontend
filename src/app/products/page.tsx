@@ -127,9 +127,11 @@ export default function ProductsPage() {
 
   return (
     <div>
-      <main className="mx-auto mt-8 max-w-6xl">
-        <div className="mx-auto mt-8 flex max-w-6xl">
-          <aside className="w-1/4 pr-6">
+      <main className="mx-auto mt-8 max-w-[1400px]">
+
+        <div className="mx-auto mt-8 flex max-w-[1400px] flex-col gap-6 px-4 md:flex-row">
+
+          <aside className="w-full md:w-[250px] md:flex-shrink-0 md:pr-6">
             <h2 className="mb-4 text-xl font-bold">商品一覧</h2>
 
             <input
@@ -142,9 +144,7 @@ export default function ProductsPage() {
               }}
               className="mb-2 w-full rounded border px-3 py-2"
             />
-
             <label className="mb-2 block">価格で並べ替え:</label>
-
             <select
               value={sort}
               onChange={(e) => {
@@ -159,7 +159,8 @@ export default function ProductsPage() {
             </select>
           </aside>
 
-          <div className="w-3/4">
+          <div className="w-full md:flex-1">
+
             <div className="mb-4 flex justify-end">
               <Link
                 href="/products/create"
@@ -169,11 +170,11 @@ export default function ProductsPage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
               {products.map((product) => (
                 <Link href={`/products/${product.id}`} key={product.id}>
                   <div className="rounded bg-white p-4 shadow">
-                    
+
                     <Image
                       src={getImageUrl(product.image)}
                       alt={product.name}
